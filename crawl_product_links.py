@@ -27,7 +27,7 @@ def get_product_links_from_all_pages(main_url: str, page_from=1, page_to=2):
     pages = range(page_from, page_to)
     product_links = []
     for p in pages:
-        time.sleep(1)
+        time.sleep(0.1)
         page_url = main_url + '?page=' + str(p)
         try:
             new_links = get_product_links_from_a_page(page_url=page_url)
