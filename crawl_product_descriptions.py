@@ -1,5 +1,8 @@
 from bs4 import BeautifulSoup
 import requests
+import json
+import time
+import crawl_product_links
 
 def get_product_info(product_url: str):
     """From a unique plant URL, get the plant name, family and culture description"""
@@ -30,3 +33,26 @@ def get_product_info(product_url: str):
                     'description': product_description}
 
     return product_data
+
+def get_all_product_info(product_url_list: list):
+
+    result = {}
+    for product_url in product_url_list:
+        time.sleep(0.1)
+        product_info = get_product_info(product_url=product_url)
+        product_code = product_info['code']
+        result[product_code] = product_info
+
+    return result
+
+def main():
+    product_url_list = crawl_product_links.get_product_links_from_all_pages(
+                                        main_url='https://kokopelli-semences.fr/fr/c/semences/potageres',
+                                        page_from=1, page_to=2)
+    result = get_all_product_info(product_url_list=product_url_list)
+    with open('product_info.json', mode='w') as file:
+        json.dump(result, file)
+
+
+if __name__ == "__main__":
+    main()
