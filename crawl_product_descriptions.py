@@ -3,6 +3,7 @@ import requests
 import json
 import time
 import crawl_product_links
+import logging
 
 def get_product_info(product_url: str):
     """From a unique plant URL, get the plant name, family and culture description"""
@@ -46,11 +47,14 @@ def get_all_product_info(product_url_list: list):
     return result
 
 def main():
-    product_url_list = crawl_product_links.get_product_links_from_all_pages(
-                                        main_url='https://kokopelli-semences.fr/fr/c/semences/potageres',
-                                        page_from=1, page_to=2)
+    # product_url_list = crawl_product_links.get_product_links_from_all_pages(
+    #                                     main_url='https://kokopelli-semences.fr/fr/c/semences/potageres',
+    #                                     page_from=1, page_to=2)
+    with open('product_link_file.json') as link_file:
+        product_url_list = json.load(link_file)
     result = get_all_product_info(product_url_list=product_url_list)
     with open('product_info.json', mode='w') as file:
+        logging.warning('Final step: creating json with product descriptions')
         json.dump(result, file)
 
 
