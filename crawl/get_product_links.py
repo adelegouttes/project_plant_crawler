@@ -42,7 +42,8 @@ def get_product_links_from_all_pages(main_url: str, page_from=1, page_to=2):
 def main():
     product_links = get_product_links_from_all_pages(main_url='https://kokopelli-semences.fr/fr/c/semences/potageres',
                                                  page_from=1, page_to=5)
-    with open('product_link_file.json', mode='w') as file:
+    logging.info('Creating json with product links')
+    with open('../data/product_link_file.json', mode='w') as file:
         json.dump(product_links, file)
 
 
