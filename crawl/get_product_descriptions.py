@@ -3,6 +3,9 @@ import requests
 import json
 import time
 import logging
+import crawl.format_product_description as format_product_description
+import os
+
 
 def get_product_info(product_url: str):
     """From a unique plant URL, get the plant name, family and culture description"""
@@ -30,9 +33,10 @@ def get_product_info(product_url: str):
     product_data = {'code': product_code,
                     'name': product_name,
                     'family': product_family,
-                    'description': product_description}
+                    'description_raw': product_description}
 
     return product_data
+
 
 def get_all_product_info(product_url_list: list):
 
@@ -45,13 +49,21 @@ def get_all_product_info(product_url_list: list):
 
     return result
 
+
 def main():
+
     with open('../data/product_link_file.json') as link_file:
         product_url_list = json.load(link_file)
-    result = get_all_product_info(product_url_list=product_url_list)
-    with open('../data/product_info.json', mode='w') as file:
-        logging.warning('Final step: creating json with product descriptions')
-        json.dump(result, file)
+
+    product_url = product_url_list[10]
+    product_data = get_product_info(product_url=product_url)
+    product_description = product_data['description_raw']
+    format_product_description.get_period_seedling(product_description)
+    # result = get_all_product_info(product_url_list=product_url_list)
+    # with open('../data/product_info.json', mode='w') as file:
+    #     logging.warning('Final step: creating json with product descriptions')
+    #     json.dump(result, file)
+
 
 
 if __name__ == "__main__":
