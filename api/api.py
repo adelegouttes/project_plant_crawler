@@ -1,5 +1,12 @@
 from flask import Flask, jsonify, request
 import json
+from database import db_session, init_db
+from models import Plant
+
+import os
+
+
+print(os.path.abspath(os.path.dirname(__file__)))
 
 app = Flask(__name__)
 
@@ -18,10 +25,13 @@ def api_all():
     return jsonify(plants)
 
 
-
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    db_session.remove()
 
 
 if __name__ == '__main__':
+    init_db()
     with open('../data/product_info.json') as file:
         plants = json.load(file)
     app.run(debug=True)

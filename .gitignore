@@ -115,5 +115,6 @@ venv.bak/
 *.json
 *.xls
 *.xlsx
+*.db
 
 
