@@ -55,14 +55,14 @@ def main():
     with open('../data/product_link_file.json') as link_file:
         product_url_list = json.load(link_file)
 
-    product_url = product_url_list[10]
-    product_data = get_product_info(product_url=product_url)
-    product_description = product_data['description_raw']
-    format_product_description.get_period_seedling(product_description)
-    # result = get_all_product_info(product_url_list=product_url_list)
-    # with open('../data/product_info.json', mode='w') as file:
-    #     logging.warning('Final step: creating json with product descriptions')
-    #     json.dump(result, file)
+    # product_url = product_url_list[10]
+    # product_data = get_product_info(product_url=product_url)
+    # product_description = product_data['description_raw']
+    # format_product_description.get_period_seedling(product_description)
+    result = get_all_product_info(product_url_list=product_url_list)
+    with open('../data/product_info.json', mode='w') as file:
+        logging.warning('Final step: creating json with product descriptions')
+        json.dump(result, file)
 
 
 
