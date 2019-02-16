@@ -5,6 +5,8 @@ import json
 
 def main():
     database.init_db()
+    database.db_session.query(Plant).delete()
+
 
     with open('../data/product_info.json') as file:
         plants = json.load(file)
@@ -18,8 +20,11 @@ def main():
                             # description_raw=plant['description_raw']
                             )
         database.db_session.add(plant_entry)
-        database.db_session.commit()
+
         print(plant_entry)
+
+    database.db_session.commit()
+    database.db_session.close()
 
 
 if __name__ == '__main__':
