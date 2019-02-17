@@ -1,11 +1,11 @@
-from models import Plant
-import database
+from plant import Plant
+from base import init_db, db_session
 import json
 
 
 def main():
-    database.init_db()
-    database.db_session.query(Plant).delete()
+    init_db()
+    db_session.query(Plant).delete()
 
 
     with open('../data/product_info.json') as file:
@@ -17,14 +17,13 @@ def main():
         plant_entry = Plant(code=plant['code'],
                             name=plant['name'],
                             family=plant['family'],
-                            # description_raw=plant['description_raw']
                             )
-        database.db_session.add(plant_entry)
+        db_session.add(plant_entry)
 
         print(plant_entry)
 
-    database.db_session.commit()
-    database.db_session.close()
+    db_session.commit()
+    db_session.close()
 
 
 if __name__ == '__main__':
