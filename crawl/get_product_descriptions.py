@@ -3,8 +3,29 @@ import requests
 import json
 import time
 import logging
-import crawl.format_product_description as format_product_description
-import os
+from crawl import format_product_description
+
+
+def format_product_info(product_code, product_name, product_family, product_description):
+    """From raw information about a product, return a dictionary with proper formatting"""
+
+    period_harvest = format_product_description.get_and_format_period(product_description=product_description,
+                                                                      key='periode_recolte')
+    period_seedling_direct = format_product_description.get_and_format_period(product_description=product_description,
+                                                                              key='periode_semis_terre')
+    period_seedling_shelter = format_product_description.get_and_format_period(product_description=product_description,
+                                                                               key='periode_semis_abri')
+
+    product_data = {'code': product_code,
+                    'name': product_name,
+                    'family': product_family,
+                    'period_harvest': period_harvest,
+                    'period_seedling_direct': period_seedling_direct,
+                    'period_seedling_shelter': period_seedling_shelter,
+                    'description_raw': product_description,
+                    }
+
+    return product_data
 
 
 def get_product_info(product_url: str):
@@ -30,15 +51,16 @@ def get_product_info(product_url: str):
         product_description[attribute_key] = attribute_text
 
     # Shape final output
-    product_data = {'code': product_code,
-                    'name': product_name,
-                    'family': product_family,
-                    'description_raw': product_description}
+    product_data = format_product_info(product_code=product_code,
+                                       product_name=product_name,
+                                       product_family=product_family,
+                                       product_description=product_description)
 
     return product_data
 
 
 def get_all_product_info(product_url_list: list):
+    """Gather information about all products which URL is listed"""
 
     result = {}
     for product_url in product_url_list:
@@ -55,15 +77,10 @@ def main():
     with open('../data/product_link_file.json') as link_file:
         product_url_list = json.load(link_file)
 
-    # product_url = product_url_list[10]
-    # product_data = get_product_info(product_url=product_url)
-    # product_description = product_data['description_raw']
-    # format_product_description.get_period_seedling(product_description)
     result = get_all_product_info(product_url_list=product_url_list)
     with open('../data/product_info.json', mode='w') as file:
         logging.warning('Final step: creating json with product descriptions')
         json.dump(result, file)
-
 
 
 if __name__ == "__main__":

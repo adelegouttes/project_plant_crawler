@@ -1,6 +1,7 @@
+import logging
 
 
-def format_period(period_string):
+def format_period_string(period_string):
     """Transform a string enumerating months in French to a list object of integer between 1 and 12."""
 
     translation_month = {'Janvier': 1, 'Février':2, 'Mars': 3, 'Avril': 4, 'Mai': 5, 'Juin': 6, 'Juillet': 7,
@@ -11,25 +12,15 @@ def format_period(period_string):
     return period_formatted
 
 
-def get_period_seedling(product_description):
-
-    print(product_description.keys())
-    try:
-        period_seedling_direct = format_period(product_description['periode_semis_terre'])
-    except KeyError:
-        period_seedling_direct = []
+def get_and_format_period(product_description, key, format_function=format_period_string):
+    """For a period key in product description, apply a transformation.
+    When the key does not exist, return an empty list """
 
     try:
-        period_seedling_shelter = format_period(product_description['periode_semis_abri'])
-    except KeyError:
-        period_seedling_shelter = []
+        period = format_function(product_description[key])
+    except KeyError as e:
+        logging.warning("KeyError: %s" % e)
+        return []
 
-    try:
-        period_harvest = format_period(product_description['periode_recolte'])
-    except KeyError:
-        period_harvest = []
-
-    print(period_seedling_direct)
-    print(period_seedling_shelter)
-    print(period_harvest)
+    return period
 
