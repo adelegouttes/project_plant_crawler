@@ -3,7 +3,11 @@ import requests
 import json
 import time
 import logging
-from crawl import format_product_description
+import os
+from project_plant_crawler.crawl import format_product_description
+
+abs_file_path = os.path.dirname(os.path.abspath(__file__))
+DATA_OUTPUT_PATH = os.path.dirname(abs_file_path) + '/data'
 
 
 def format_product_info(product_code, product_name, product_family, product_description):
@@ -74,11 +78,11 @@ def get_all_product_info(product_url_list: list):
 
 def main():
 
-    with open('../data/product_link_file.json') as link_file:
+    with open(DATA_OUTPUT_PATH + '/product_link_file.json') as link_file:
         product_url_list = json.load(link_file)
 
     result = get_all_product_info(product_url_list=product_url_list)
-    with open('../data/product_info.json', mode='w') as file:
+    with open(DATA_OUTPUT_PATH + '/product_info.json', mode='w') as file:
         logging.warning('Final step: creating json with product descriptions')
         json.dump(result, file)
 
