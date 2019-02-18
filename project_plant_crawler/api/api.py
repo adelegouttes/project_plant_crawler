@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, request
-from database import db_session
+from project_plant_crawler.database.base import db_session, DATABASE_PATH
 import sqlite3
-
 
 
 
@@ -39,7 +38,7 @@ def shutdown_session(exception=None):
 # A route to return all of the available entries in our catalog.
 @app.route('/api/v1/resources/plants/all', methods=['GET'])
 def api_all():
-    with sqlite3.connect('plants.db') as conn:
+    with sqlite3.connect(DATABASE_PATH) as conn:
         conn.row_factory = dict_factory  # Returns items from the database as dictionaries rather than lists
         cur = conn.cursor()
         all_plants = cur.execute('SELECT * FROM plants;').fetchall()
@@ -72,7 +71,7 @@ def api_filter():
 
     query = query[:-4] + ';'  # Removes the last 'AND'
 
-    with sqlite3.connect('plants.db') as conn:
+    with sqlite3.connect(DATABASE_PATH) as conn:
         conn.row_factory = dict_factory
         cur = conn.cursor()
         results = cur.execute(query, to_filter).fetchall()

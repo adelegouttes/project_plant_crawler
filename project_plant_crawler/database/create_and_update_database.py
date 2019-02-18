@@ -2,6 +2,11 @@ from plant import Plant
 from month import Month
 from base import init_db, db_session
 import json
+import os
+
+abs_file_path = os.path.dirname(os.path.abspath(__file__))
+DATA_SOURCE_PATH = os.path.dirname(abs_file_path) + '/data'
+
 
 
 def fill_month_table():
@@ -27,12 +32,12 @@ def fill_month_table():
     db_session.commit()
 
 
-def fill_plant_table():
+def fill_plant_table(data_source_path):
 
     db_session.query(Plant).delete()
 
     # Read json where crawl data is stored
-    with open('../data/product_info.json') as file:
+    with open(data_source_path) as file:
         plants = json.load(file)
 
     # For each plant: create a plant entry, and corresponding harvest months
@@ -60,7 +65,9 @@ def main():
     init_db()
 
     fill_month_table()
-    fill_plant_table()
+
+    # Plant table
+    fill_plant_table(data_source_path=DATA_SOURCE_PATH + '/product_info.json')
 
     db_session.close()
 
