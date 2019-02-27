@@ -1,5 +1,5 @@
 from sqlalchemy import Column, String, Integer
-from base import Base
+from project_plant_crawler.database.base import Base
 
 
 class Month(Base):

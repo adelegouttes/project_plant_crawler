@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, Integer, Table, ForeignKey
 from sqlalchemy.orm import relationship
-from base import Base
+from project_plant_crawler.database.base import Base
 
 
 plants_harvest_months_association = Table(
