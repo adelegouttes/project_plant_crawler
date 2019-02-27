@@ -25,3 +25,6 @@ class Plant(Base):
     def __repr__(self):
         return '<Plant %r>' % (self.name)
 
+    def jsonify(self):
+        return {'name': self.name, 'family': self.family, 'plant_id': self.plant_id}
+

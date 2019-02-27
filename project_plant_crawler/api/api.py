@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, request
 from project_plant_crawler.database.base import db_session, DATABASE_PATH
 import sqlite3
+from project_plant_crawler.database.plant import Plant
+from project_plant_crawler.database.month import Month
 
 
 
@@ -37,7 +39,12 @@ def shutdown_session(exception=None):
 
 # A route to return all of the available entries in our catalog.
 @app.route('/api/v1/resources/plants/all', methods=['GET'])
+def api_plant_all():
 def api_all():
+    all_plants = []
+    for plant in db_session.query(Plant).all():
+        all_plants.append(plant.jsonify())
+    return jsonify(all_plants)
     with sqlite3.connect(DATABASE_PATH) as conn:
         conn.row_factory = dict_factory  # Returns items from the database as dictionaries rather than lists
         cur = conn.cursor()
