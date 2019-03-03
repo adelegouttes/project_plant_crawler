@@ -5,7 +5,6 @@ from project_plant_crawler.database.plant import Plant
 from project_plant_crawler.database.month import Month
 
 
-
 app = Flask(__name__)
 
 
@@ -28,8 +27,11 @@ def home():
 
 
 @app.errorhandler(404)
-def page_not_found(e):
-    return "<h1>404</h1><p>The resource could not be found.</p>", 404
+def page_not_found(e, message=None):
+    return """
+    <h1>404</h1>
+    <p>The resource could not be found.</p>
+    """ + message, 404
 
 
 @app.teardown_appcontext
@@ -65,7 +67,8 @@ def api_plant_filter():
     if plant_id:
         to_filter += ' plant_id=%r AND' % plant_id
     if not (name or family or plant_id):
-        return page_not_found(404)
+        return page_not_found(404,
+                              message='<p> Please filter plants only with the following arguments: family, name, plant_id.</p>')
 
     to_filter = to_filter[:-4]  # Removes the last 'AND'
 
@@ -73,7 +76,8 @@ def api_plant_filter():
     for plant in db_session.query(Plant).filter(to_filter).all():
         plants.append(plant.jsonify())
     if len(plants)==0:
-        return page_not_found(404)
+        return page_not_found(404,
+                              message='<p>Filtering is too restrictive: no plant matches all filters.<p>')
     return jsonify(plants)
 
 
