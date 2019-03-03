@@ -40,50 +40,41 @@ def shutdown_session(exception=None):
 # A route to return all of the available entries in our catalog.
 @app.route('/api/v1/resources/plants/all', methods=['GET'])
 def api_plant_all():
-def api_all():
     all_plants = []
     for plant in db_session.query(Plant).all():
         all_plants.append(plant.jsonify())
     return jsonify(all_plants)
-    with sqlite3.connect(DATABASE_PATH) as conn:
-        conn.row_factory = dict_factory  # Returns items from the database as dictionaries rather than lists
-        cur = conn.cursor()
-        all_plants = cur.execute('SELECT * FROM plants;').fetchall()
-        return jsonify(all_plants)
 
 
 @app.route('/api/v1/resources/plants', methods=['GET'])
-def api_filter():
+def api_plant_filter():
 
     query_parameters = request.args  # Get all arguments in the filter of the url
 
     # Collect arguments for each parameter separately
     name = query_parameters.get('name')
     family = query_parameters.get('family')
-
-    # Base query: will look like that: SELECT <columns> FROM <table> WHERE <column=match> AND <column=match>;
-    # The list to_filter will collect the parameters to be used in the query (so order matters)
-    query = "SELECT * FROM plants WHERE"
-    to_filter = []
+    plant_id = query_parameters.get('plant_id')
 
     # For each type of parameter, adapt the query and add the parameter to the list of parameters
+    to_filter = ''
     if name:
-        query += ' name=? AND'
-        to_filter.append(name)
+        to_filter += ' name=%r AND' % name
     if family:
-        query += ' family=? AND'
-        to_filter.append(family)
-    if not (name or family):
+        to_filter += ' family=%r AND' % family
+    if plant_id:
+        to_filter += ' plant_id=%r AND' % plant_id
+    if not (name or family or plant_id):
         return page_not_found(404)
 
-    query = query[:-4] + ';'  # Removes the last 'AND'
+    to_filter = to_filter[:-4]  # Removes the last 'AND'
 
-    with sqlite3.connect(DATABASE_PATH) as conn:
-        conn.row_factory = dict_factory
-        cur = conn.cursor()
-        results = cur.execute(query, to_filter).fetchall()
-
-    return jsonify(results)
+    plants = []
+    for plant in db_session.query(Plant).filter(to_filter).all():
+        plants.append(plant.jsonify())
+    if len(plants)==0:
+        return page_not_found(404)
+    return jsonify(plants)
 
 
 if __name__ == '__main__':
