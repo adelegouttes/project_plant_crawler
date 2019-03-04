@@ -1,12 +1,8 @@
-from plant import Plant
-from month import Month
-from base import init_db, db_session
+from project_plant_crawler.database.plant import Plant
+from project_plant_crawler.database.month import Month
+from project_plant_crawler.database.base import init_db, db_session
 import json
-import os
-
-abs_file_path = os.path.dirname(os.path.abspath(__file__))
-DATA_SOURCE_PATH = os.path.dirname(abs_file_path) + '/data'
-
+from project_plant_crawler.crawl.constants import CRAWL_OUTPUT_PRODUCT_DESCRIPTION_PATH
 
 
 def fill_month_table():
@@ -62,13 +58,10 @@ def fill_plant_table(data_source_path):
 
 
 def main():
+
     init_db()
-
     fill_month_table()
-
-    # Plant table
-    fill_plant_table(data_source_path=DATA_SOURCE_PATH + '/product_info.json')
-
+    fill_plant_table(data_source_path=CRAWL_OUTPUT_PRODUCT_DESCRIPTION_PATH)
     db_session.close()
 
 
