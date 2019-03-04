@@ -5,6 +5,7 @@ REQUIREMENTS = [
       'beautifulsoup4==4.7.1',
       'flask==1.0.2',
       'sqlalchemy==1.2.18',
+      'pytest==4.3.0',
 ]
 
 setup(name='project_plant_crawler',
