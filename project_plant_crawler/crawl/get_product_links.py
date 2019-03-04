@@ -3,6 +3,7 @@ import requests
 import time
 import json
 import logging
+from project_plant_crawler.crawl.constants import MAIN_URL, CRAWL_OUTPUT_PRODUCT_LINKS_PATH
 
 
 def get_product_links_from_a_page(page_url:str):
@@ -40,10 +41,9 @@ def get_product_links_from_all_pages(main_url: str, page_from=1, page_to=2):
 
 
 def main():
-    product_links = get_product_links_from_all_pages(main_url='https://kokopelli-semences.fr/fr/c/semences/potageres',
-                                                 page_from=1, page_to=5)
+    product_links = get_product_links_from_all_pages(main_url=MAIN_URL, page_from=1, page_to=5)
     logging.info('Creating json with product links')
-    with open('../data/product_link_file.json', mode='w') as file:
+    with open(CRAWL_OUTPUT_PRODUCT_LINKS_PATH, mode='w') as file:
         json.dump(product_links, file)
 
 
