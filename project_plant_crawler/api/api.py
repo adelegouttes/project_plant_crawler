@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from project_plant_crawler.database.base import db_session
 from project_plant_crawler.database.plant import Plant
 from project_plant_crawler.database.month import Month
+from project_plant_crawler.api.api_utilities import generate_filter_string
 
 
 app = Flask(__name__)
@@ -54,26 +55,17 @@ def api_plant_all():
 @app.route('/api/v1/resources/plants', methods=['GET'])
 def api_plant_filter():
 
-    query_parameters = request.args  # Get all arguments in the filter of the url
+    query_parameters = request.args.to_dict()  # Get all arguments in the filter of the url
 
-    # Collect arguments for each parameter separately
-    name = query_parameters.get('name')
-    family = query_parameters.get('family')
-    plant_id = query_parameters.get('plant_id')
+    allowed_keys = ['name', 'family', 'plant_id']
+    to_filter = generate_filter_string(allowed_keys=allowed_keys,
+                                       query_parameters=query_parameters)
 
-    # For each type of parameter, adapt the query and add the parameter to the list of parameters
-    to_filter = ''
-    if name:
-        to_filter += ' name=%r AND' % name
-    if family:
-        to_filter += ' family=%r AND' % family
-    if plant_id:
-        to_filter += ' plant_id=%r AND' % plant_id
-    if not (name or family or plant_id):
+    if to_filter == '':
+        allowed_keys_string = ', '.join(str(i) for i in allowed_keys)
         return page_not_found(404,
-                              message='<p> Please filter plants only with the following arguments: family, name, plant_id.</p>')
-
-    to_filter = to_filter[:-4]  # Removes the last 'AND'
+                              message='<p> Please filter plants only with the following arguments: {}.</p>'\
+                              .format(allowed_keys_string))
 
     plants = []
     for plant in db_session.query(Plant).filter(to_filter).all():
