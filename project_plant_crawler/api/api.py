@@ -27,10 +27,14 @@ def home():
 
 @app.errorhandler(404)
 def page_not_found(e, message=None):
-    return """
-    <h1>404</h1>
-    <p>The resource could not be found.</p>
-    """ + message, 404
+    main_message = """
+        <h1>404</h1>
+        <p>The resource could not be found.</p>
+        """
+    if message:
+        return main_message + message, 404
+    else:
+        return main_message, 404
 
 
 @app.teardown_appcontext
