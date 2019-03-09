@@ -14,3 +14,6 @@ class Month(Base):
     def __repr__(self):
         return '<Month %r>' % self.month_name_eng
 
+    def to_dict(self):
+        return {'id': self.month_id, 'name': self.month_name_eng}
+

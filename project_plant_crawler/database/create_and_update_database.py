@@ -28,6 +28,11 @@ def fill_month_table():
     db_session.commit()
 
 
+def fill_plant_associated_month_table(plant_raw: dict,  input_key: str):
+    inputs = plant_raw[input_key]
+    return db_session.query(Month).filter(Month.month_id.in_(inputs)).all()
+
+
 def fill_plant_table(data_source_path):
 
     db_session.query(Plant).delete()
@@ -53,6 +58,13 @@ def fill_plant_table(data_source_path):
         plant_entry.harvest_months = db_session.query(Month)\
                                                 .filter(Month.month_id.in_(harvest_month_ids))\
                                                 .all()
+
+        # plant_entry.seedling_direct_months = fill_plant_associated_month_table(plant_raw=plant,
+        #                                                                        input_key='period_seedling_direct')
+        # seedling_direct_month_ids = plant['period_seedling_direct']
+        # plant_entry.seedling_direct_months = db_session.query(Month)\
+        #                                         .filter(Month.month_id.in_(seedling_direct_month_ids))\
+        #                                         .all()
 
     db_session.commit()
 

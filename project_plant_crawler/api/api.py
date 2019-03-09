@@ -1,6 +1,5 @@
 from flask import Flask, jsonify, request
-from project_plant_crawler.database.base import db_session, DATABASE_PATH
-import sqlite3
+from project_plant_crawler.database.base import db_session
 from project_plant_crawler.database.plant import Plant
 from project_plant_crawler.database.month import Month
 
