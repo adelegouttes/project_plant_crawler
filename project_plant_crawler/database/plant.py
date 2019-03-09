@@ -13,6 +13,11 @@ plants_seedling_direct_months_association = Table(
     Column('plant_id', String, ForeignKey('plants.plant_id')),
     Column('seedling_direct_month_id', Integer, ForeignKey('months.month_id'))
 )
+plants_seedling_shelter_months_association = Table(
+    'plants_shelter_direct_months',  Base.metadata,
+    Column('plant_id', String, ForeignKey('plants.plant_id')),
+    Column('seedling_shelter_month_id', Integer, ForeignKey('months.month_id'))
+)
 
 class Plant(Base):
     __tablename__ = 'plants'
@@ -21,6 +26,7 @@ class Plant(Base):
     family = Column(String(150), unique=False)
     harvest_months = relationship("Month", secondary=plants_harvest_months_association)
     seedling_direct_months = relationship("Month", secondary=plants_seedling_direct_months_association)
+    seedling_shelter_months = relationship("Month", secondary=plants_seedling_shelter_months_association)
 
     def __init__(self, plant_id=None, name=None, family=None):
         self.name = name
@@ -33,5 +39,7 @@ class Plant(Base):
     def jsonify(self):
         return {'name': self.name, 'family': self.family, 'plant_id': self.plant_id,
                 'harvest_months': [month.to_dict() for month in self.harvest_months],
-                'seedling_direct': [month.to_dict() for month in self.seedling_direct_months]}
+                'seedling_direct': [month.to_dict() for month in self.seedling_direct_months],
+                'seedling_shelter': [month.to_dict() for month in self.seedling_shelter_months]
+                }
 

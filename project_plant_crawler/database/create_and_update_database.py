@@ -53,18 +53,12 @@ def fill_plant_table(data_source_path):
                             )
         db_session.add(plant_entry)
 
-        # Update harvest month for that table
-        harvest_month_ids = plant['period_harvest']
-        plant_entry.harvest_months = db_session.query(Month)\
-                                                .filter(Month.month_id.in_(harvest_month_ids))\
-                                                .all()
-
-        # plant_entry.seedling_direct_months = fill_plant_associated_month_table(plant_raw=plant,
-        #                                                                        input_key='period_seedling_direct')
-        # seedling_direct_month_ids = plant['period_seedling_direct']
-        # plant_entry.seedling_direct_months = db_session.query(Month)\
-        #                                         .filter(Month.month_id.in_(seedling_direct_month_ids))\
-        #                                         .all()
+        # Update seedling and harvest months for that table
+        plant_entry.harvest_months = fill_plant_associated_month_table(plant_raw=plant, input_key='period_harvest')
+        plant_entry.seedling_direct_months = fill_plant_associated_month_table(plant_raw=plant,
+                                                                               input_key='period_seedling_direct')
+        plant_entry.seedling_shelter_months = fill_plant_associated_month_table(plant_raw=plant,
+                                                                                input_key='period_seedling_shelter')
 
     db_session.commit()
 
