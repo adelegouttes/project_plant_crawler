@@ -43,9 +43,9 @@ def shutdown_session(exception=None):
     db_session.remove()
 
 
-# A route to return all of the available entries in our catalog.
 @app.route('/api/v1/resources/plants/all', methods=['GET'])
 def api_plant_all():
+    """A route to return all of the available plants in our catalog."""
     all_plants = []
     for plant in db_session.query(Plant).all():
         all_plants.append(plant.jsonify())
@@ -54,6 +54,7 @@ def api_plant_all():
 
 @app.route('/api/v1/resources/plants', methods=['GET'])
 def api_plant_filter():
+    """A route to return only some plants, filtered by their name, family or ID"""
 
     query_parameters = request.args.to_dict()  # Get all arguments in the filter of the url
 
@@ -71,6 +72,29 @@ def api_plant_filter():
         return page_not_found(404,
                               message='<p>Filtering is too restrictive: no plant matches all filters.</p>')
     return jsonify(plants)
+
+
+@app.route('/api/v1/resources/months/all', methods=['GET'])
+def api_month_all():
+    """A route to return all of the available months in our catalog."""
+    months = []
+    for month in db_session.query(Month).all():
+        months.append(month.jsonify())
+    return jsonify(months)
+
+
+@app.route('/api/v1/resources/months/harvest_months/all', methods=['GET'])
+def api_month_harvest_all():
+    """A route to return all of the plants gathered by harvest month."""
+    harvest_months = []
+    for month in db_session.query(Month).all():
+        harvest_month = dict()
+        harvest_month['month'] = month.jsonify()
+        harvest_month['plants'] = []
+        for plant in db_session.query(Plant).filter(Plant.harvest_months.contains(month)).all():
+            harvest_month['plants'].append(plant.jsonify())
+        harvest_months.append(harvest_month)
+    return jsonify(harvest_months)
 
 
 if __name__ == '__main__':

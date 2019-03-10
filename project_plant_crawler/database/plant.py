@@ -38,8 +38,8 @@ class Plant(Base):
 
     def jsonify(self):
         return {'name': self.name, 'family': self.family, 'plant_id': self.plant_id,
-                'harvest_months': [month.to_dict() for month in self.harvest_months],
-                'seedling_direct': [month.to_dict() for month in self.seedling_direct_months],
-                'seedling_shelter': [month.to_dict() for month in self.seedling_shelter_months]
+                'harvest_months': [month.jsonify() for month in self.harvest_months],
+                'seedling_direct': [month.jsonify() for month in self.seedling_direct_months],
+                'seedling_shelter': [month.jsonify() for month in self.seedling_shelter_months]
                 }
 
