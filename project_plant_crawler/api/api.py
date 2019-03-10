@@ -58,21 +58,18 @@ def api_plant_filter():
     query_parameters = request.args.to_dict()  # Get all arguments in the filter of the url
 
     allowed_keys = ['name', 'family', 'plant_id']
-    to_filter = generate_filter_string(allowed_keys=allowed_keys,
-                                       query_parameters=query_parameters)
-
-    if to_filter == '':
-        allowed_keys_string = ', '.join(str(i) for i in allowed_keys)
-        return page_not_found(404,
-                              message='<p> Please filter plants only with the following arguments: {}.</p>'\
-                              .format(allowed_keys_string))
+    try:
+        to_filter = generate_filter_string(allowed_keys=allowed_keys,
+                                           query_parameters=query_parameters)
+    except KeyError as e_info:
+        return page_not_found(404, message=e_info.args[0])
 
     plants = []
     for plant in db_session.query(Plant).filter(to_filter).all():
         plants.append(plant.jsonify())
     if len(plants)==0:
         return page_not_found(404,
-                              message='<p>Filtering is too restrictive: no plant matches all filters.<p>')
+                              message='<p>Filtering is too restrictive: no plant matches all filters.</p>')
     return jsonify(plants)
 
 
