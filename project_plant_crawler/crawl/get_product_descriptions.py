@@ -79,9 +79,9 @@ def main():
         product_url_list = json.load(link_file)
 
     result = get_all_product_info(product_url_list=product_url_list)
-    with open(CRAWL_OUTPUT_PRODUCT_DESCRIPTION_PATH, mode='w') as file:
-        logging.warning('Final step: creating json with product descriptions')
-        json.dump(result, file)
+        with open(CRAWL_OUTPUT_PRODUCT_DESCRIPTION_PATH, mode='w') as file:
+            logging.warning('Final step: creating json with product descriptions')
+            json.dump(result, file)
 
 
 if __name__ == "__main__":

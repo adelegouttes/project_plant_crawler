@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from project_plant_crawler.database.base import db_session
 from project_plant_crawler.database.plant import Plant
 from project_plant_crawler.database.month import Month
-from project_plant_crawler.api.api_utilities import generate_filter_string
+from project_plant_crawler.api.api_utilities import generate_filter_string, generate_plants_for_month_list
 
 
 app = Flask(__name__)
@@ -110,17 +110,14 @@ def api_month_harvest_month_filter():
     except KeyError as e_info:
         return page_not_found(404, message=e_info.args[0])
 
-    harvest_months = []
-    for month in db_session.query(Month).filter(to_filter).all():
-        harvest_month = dict()
-        harvest_month['month'] = month.jsonify()
-        harvest_month['plants'] = []
-        for plant in db_session.query(Plant).filter(Plant.harvest_months.contains(month)).all():
-            harvest_month['plants'].append(plant.jsonify())
-        if len(harvest_month['plants']) == 0:
-            return page_not_found(404,
-                                  message='<p>Filtering is too restrictive: no plants for this harvest month.</p>')
-        harvest_months.append(harvest_month)
+    try:
+        harvest_months = generate_plants_for_month_list(
+            months=db_session.query(Month).filter(to_filter).all(),
+            plant_month_attribute=Plant.harvest_months
+        )
+    except ValueError as e_info:
+        return page_not_found(404, message=e_info.args[0])
+
     if len(harvest_months) == 0:
         return page_not_found(404,
                               message='<p>Filtering is too restrictive: no harvest month for filter.</p>')
